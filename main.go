@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"image/color"
+	"log"
+	"strconv"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -19,12 +21,55 @@ func main() {
 	a := app.New()
 	w := a.NewWindow("Hello")
 
-	w.SetContent(RectangleSample())
+	w.SetContent(FormSample())
 
 	w.Resize(fyne.NewSize(300, 300))
 	w.ShowAndRun()
 
 	fmt.Println("Hello")
+}
+
+func FormSample() *widget.Form {
+	entry1 := widget.NewEntry()
+	entry2 := widget.NewEntry()
+	entry3 := widget.NewEntry()
+	textArea := widget.NewMultiLineEntry()
+
+	form := &widget.Form{
+		Items: []*widget.FormItem{ // we can specify items in the constructor
+			{Text: "First Name", Widget: entry1},
+			{Text: "Last Name", Widget: entry2},
+			{Text: "Age", Widget: entry3},
+			{Text: "Free Text", Widget: textArea},
+		},
+		OnSubmit: func() { // optional, handle form submission
+			log.Println("Form submitted:", entry1.Text)
+			log.Println("multiline:", textArea.Text)
+		},
+	}
+
+	return form
+}
+
+func EntryWidgetSample() *fyne.Container {
+
+	labelText := binding.NewString()
+	labelText.Set("Default Value")
+
+	label := widget.NewLabelWithData(labelText)
+
+	input := widget.NewEntry()
+	input.SetPlaceHolder("Enter text...")
+
+	button := widget.NewButton("Click me", func() {
+		labelText.Set(input.Text)
+	})
+
+	check := widget.NewCheck("Please select", func(val bool) {
+		labelText.Set(strconv.FormatBool(val))
+	})
+
+	return container.New(layout.NewGridLayout(1), label, input, button, check)
 }
 
 func RectangleSample() *fyne.Container {
