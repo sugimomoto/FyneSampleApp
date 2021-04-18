@@ -11,8 +11,10 @@ import (
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	_ "github.com/alexbrainman/odbc"
 )
@@ -21,12 +23,80 @@ func main() {
 	a := app.New()
 	w := a.NewWindow("Hello")
 
-	w.SetContent(FormSample())
+	w.SetContent(ZyankenIcon())
 
-	w.Resize(fyne.NewSize(300, 300))
+	w.Resize(fyne.NewSize(800, 800))
 	w.ShowAndRun()
 
 	fmt.Println("Hello")
+}
+
+func ZyankenIcon() *fyne.Container {
+	goo := []int{0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0}
+	choki := []int{0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0}
+	per := []int{0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0}
+
+	mainContainer := container.New(layout.NewGridLayout(5),
+		widget.NewLabel(" "),
+		widget.NewLabel(" "),
+		widget.NewLabel(" "),
+		widget.NewLabel(" "),
+		widget.NewLabel(" "),
+
+		widget.NewLabel(" "),
+		widget.NewLabel(" "),
+		widget.NewLabel(" "),
+		widget.NewLabel(" "),
+		widget.NewLabel(" "),
+
+		GetGridPixelIcon(goo, 10),
+		widget.NewLabel(" "),
+		GetGridPixelIcon(choki, 10),
+		widget.NewLabel(" "),
+		GetGridPixelIcon(per, 10),
+
+		widget.NewLabel(" "),
+		widget.NewLabel(" "),
+		widget.NewLabel(" "),
+		widget.NewLabel(" "),
+		widget.NewLabel(" "),
+
+		widget.NewLabel(" "),
+		widget.NewLabel(" "),
+		widget.NewLabel(" "),
+		widget.NewLabel(" "),
+		widget.NewLabel(" "),
+	)
+
+	return mainContainer
+}
+
+func GetGridPixelIcon(icon []int, size int) *fyne.Container {
+
+	containerGoo := container.New(layout.NewGridLayout(size))
+	for i := 0; i < len(icon); i++ {
+		pixcel := icon[i]
+
+		if pixcel == 0 {
+			containerGoo.Add(canvas.NewRectangle(color.White))
+		} else {
+			containerGoo.Add(canvas.NewRectangle(color.Black))
+		}
+	}
+
+	return containerGoo
+}
+
+func TabsSample() *container.AppTabs {
+
+	tabs := container.NewAppTabs(
+		container.NewTabItem("Tab 1", widget.NewLabel("Hello")),
+		container.NewTabItem("Tab 2", FormSample()),
+	)
+	tabs.Append(container.NewTabItemWithIcon("Home", theme.HomeIcon(), RectangleSample()))
+	tabs.SetTabLocation(container.TabLocationTop)
+
+	return tabs
 }
 
 func FormSample() *widget.Form {
@@ -36,13 +106,13 @@ func FormSample() *widget.Form {
 	textArea := widget.NewMultiLineEntry()
 
 	form := &widget.Form{
-		Items: []*widget.FormItem{ // we can specify items in the constructor
+		Items: []*widget.FormItem{
 			{Text: "First Name", Widget: entry1},
 			{Text: "Last Name", Widget: entry2},
 			{Text: "Age", Widget: entry3},
 			{Text: "Free Text", Widget: textArea},
 		},
-		OnSubmit: func() { // optional, handle form submission
+		OnSubmit: func() {
 			log.Println("Form submitted:", entry1.Text)
 			log.Println("multiline:", textArea.Text)
 		},
